@@ -25,7 +25,12 @@ def convertedatas(data):
     data2 = np.asarray(data2)
     data3 = []
     for i,nome in enumerate(data2):
-      print(str(data2[i]),"9999999")
+      data3.append(str(data2[i]))
+      data3[i] = data3[i].replace("[", "");
+      data3[i] = data3[i].replace("]", "");
+      data3[i] = data3[i].replace(" ", "");
+    data3 = np.asarray(data3)
+    data3 = data3.astype(np.double)
     return data2
 
 def preprocessing(valor):
