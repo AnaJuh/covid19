@@ -2,7 +2,6 @@
 import json
 import pandas as pd
 import numpy as np
-from itertools import chain
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
@@ -24,8 +23,9 @@ def convertedatas(data):
     data2 = []
     data2 = data1.values
     data2 = np.asarray(data2)
-    data2 = list(chain(*data2))
-    print(data2)
+    data3 = []
+    for i,nome in enumerate(data2):
+      print(str(data2[i]),"9999999")
     return data2
 
 def preprocessing(valor):
