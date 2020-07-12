@@ -2,6 +2,7 @@
 import json
 import pandas as pd
 import numpy as np
+from sklearn.metrics import r2_score
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
@@ -12,9 +13,11 @@ from sklearn.metrics import confusion_matrix
 
 def evaluate(pr,x,y1):
     y2 = pr.predict(x)
-    confusionMatrix = confusion_matrix(y1,y2)
-    accuracy = (confusionMatrix[0][0] + confusionMatrix[1][1]) / (confusionMatrix[0][0] + confusionMatrix[1][0] + confusionMatrix[0][1] + confusionMatrix[1][1])
-    return accuracy * 100,y2
+    print(y2)
+    print(y1)
+    nota = r2_score(y1,y2)
+    print(nota)
+    return nota,y2
 
 def convertedatas(data):
     data.reverse()
@@ -31,7 +34,8 @@ def convertedatas(data):
       data3[i] = data3[i].replace(" ", "");
     data3 = np.asarray(data3)
     data3 = data3.astype(np.double)
-    return data2
+    data3 = data3.reshape(-1,1)
+    return data3
 
 def preprocessing(valor):
     valor.reverse()
@@ -42,6 +46,11 @@ def preprocessing(valor):
     scaler =  StandardScaler()
     valor = scaler.fit_transform(valor)
     return valor
+
+def transform(x,a):
+    polynomialFeatures = PolynomialFeatures(degree = a)
+    XPolynomial = polynomialFeatures.fit_transform(x)
+    return XPolynomial
 
 def polynomial_regression(x,y,a):
     polynomialFeatures = PolynomialFeatures(degree = a)
@@ -294,17 +303,17 @@ if __name__ == "__main__":
     xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.2)
     xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.2)
     xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.2)
+    xtestedata = transform(xtestedata,3)
     pr1 = polynomial_regression(xtreinodata,ytreinoconf,3)
     pr2 = polynomial_regression(xtreinodata,ytreinomoni,3)
     pr3 = polynomial_regression(xtreinodata, ytreinocura,3)
     pr4 = polynomial_regression(xtreinodata,ytreinomortes,3)
-    print(pr1.coef_)
 #    print(xtreinodata,ytreinoconf)
     nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
     nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
     nt3,y3 = evaluate(pr3,xtestedata, ytestecura)
     nt4,y4= evaluate(pr4,xtestedata,ytestemortes)
-    showPlot(ytesteconf,ytesteconf,ytesteconf,y1)
-    showPlot(ytesteconf,ytestemoni,ytesteconf,y2)
-    showPlot(ytesteconf, ytestecura,ytesteconf,y3)
-    showPlot(ytesteconf,ytestemortes,ytesteconf,y4)
+    #showPlot(ytesteconf,ytesteconf,ytesteconf,y1)
+    #showPlot(ytesteconf,ytestemoni,ytesteconf,y2)
+    #showPlot(ytesteconf, ytestecura,ytesteconf,y3
+    #showPlot(ytesteconf,ytestemortes,ytesteconf,y4)
