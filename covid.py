@@ -19,8 +19,9 @@ def evaluate(pr,x,y1):
 def convertedatas(data):
     data.reverse()
     data = np.asarray(data)
-    data2 = pd.get_dummies((data))
-    print(data2)
+    data1 = pd.get_dummies((data))
+    data2 = []
+    np.insert(data2, 0, data1.values, axis=0)
     return data2
 
 def preprocessing(valor):
@@ -37,7 +38,6 @@ def polynomial_regression(x,y,a):
     polynomialFeatures = PolynomialFeatures(degree = a)
     XPolynomial = polynomialFeatures.fit_transform(x)    
     polyLinearRegression = LinearRegression().fit(XPolynomial, y)
-    print(polyLinearRegression)
     return polyLinearRegression
 
 def showPlot(XPoints, yPoints, XLine, yLine):
@@ -289,10 +289,12 @@ if __name__ == "__main__":
     pr2 = polynomial_regression(xtreinodata,ytreinomoni,3)
     pr3 = polynomial_regression(xtreinodata, ytreinocura,3)
     pr4 = polynomial_regression(xtreinodata,ytreinomortes,3)
-    nt1,y1 = evaluate(pr1,xtreinodata,ytesteconf)
-    nt2,y2 = evaluate(pr2,xtreinodata,ytestemoni)
-    nt3,y3 = evaluate(pr3,xtreinodata, ytestecura)
-    nt4,y4= evaluate(pr4,xtreinodata,ytestemortes)
+    print((xtestedata.count(), len(xtestedata.columns)))
+    print(ytesteconf)
+    nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
+    nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
+    nt3,y3 = evaluate(pr3,xtestedata, ytestecura)
+    nt4,y4= evaluate(pr4,xtestedata,ytestemortes)
     showPlot(ytesteconf,ytesteconf,ytesteconf,y1)
     showPlot(ytesteconf,ytestemoni,ytesteconf,y2)
     showPlot(ytesteconf, ytestecura,ytesteconf,y3)
