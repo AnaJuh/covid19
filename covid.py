@@ -2,6 +2,7 @@
 import json
 import pandas as pd
 import numpy as np
+from itertools import chain
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
@@ -21,7 +22,10 @@ def convertedatas(data):
     data = np.asarray(data)
     data1 = pd.get_dummies((data))
     data2 = []
-    np.insert(data2, 0, data1.values, axis=0)
+    data2 = data1.values
+    data2 = np.asarray(data2)
+    data2 = list(chain(*data2))
+    print(data2)
     return data2
 
 def preprocessing(valor):
@@ -289,8 +293,6 @@ if __name__ == "__main__":
     pr2 = polynomial_regression(xtreinodata,ytreinomoni,3)
     pr3 = polynomial_regression(xtreinodata, ytreinocura,3)
     pr4 = polynomial_regression(xtreinodata,ytreinomortes,3)
-    print((xtestedata.count(), len(xtestedata.columns)))
-    print(ytesteconf)
     nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
     nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
     nt3,y3 = evaluate(pr3,xtestedata, ytestecura)
