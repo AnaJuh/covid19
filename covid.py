@@ -33,8 +33,8 @@ def preprocessing(valor):
     valor = valor.reshape(-1,1)
     imputer = SimpleImputer(missing_values=-1,strategy='mean')
     valor = imputer.fit_transform(valor)
-    #scaler =  StandardScaler()
-    #valor = scaler.fit_transform(valor)
+    scaler =  StandardScaler()
+    valor = scaler.fit_transform(valor)
     return valor
 
 def transform(x,a):
@@ -48,6 +48,7 @@ def polynomial_regression(x,y,a):
     return polyLinearRegression
 
 def showPlot(XPoints, yPoints, x,y):
+    print(x)
     plt.plot(x,y,color = 'red') #Mostra os pontos reais dos dados
     plt.scatter(XPoints,yPoints,color = 'blue') #Mostra os pontos preditos pelo modelo
     plt.title("Comparando pontos reais com a reta produzida pela regressão polinomial")
@@ -868,24 +869,23 @@ if __name__ == "__main__":
     curados = preprocessing(curados)
     mortes = preprocessing(mortes)
     datas = convertedatas(data)
-    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.2)
-    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.2)
-    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.2)
-    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.2)
+    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.1)
+    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.1)
+    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.1)
+    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.1)
     xtreinoaux = xtreinodata
     xtesteaux =  xtestedata
-    xtestedata = transform(xtestedata,14)
-    xtreinodata = transform(xtreinodata,14)
-    print(ytestemoni)
-    pr1 = polynomial_regression(xtreinodata,ytreinoconf,14)
-    pr2 = polynomial_regression(xtreinodata,ytreinomoni,14)
-    pr3 = polynomial_regression(xtreinodata, ytreinocura,14)
-    pr4 = polynomial_regression(xtreinodata,ytreinomortes,14)
+    xtestedata = transform(xtestedata,3)
+    xtreinodata = transform(xtreinodata,3)
+    pr1 = polynomial_regression(xtreinodata,ytreinoconf,3)
+    pr2 = polynomial_regression(xtreinodata,ytreinomoni,3)
+    pr3 = polynomial_regression(xtreinodata, ytreinocura,3)
+    pr4 = polynomial_regression(xtreinodata,ytreinomortes,3)
 #    print(xtreinodata,ytreinoconf)
-    nt1,y1 = evaluate(pr1,xtesteaux,ytesteconf)
-    nt2,y2 = evaluate(pr2,xtesteaux,ytestemoni)
-    nt3,y3 = evaluate(pr3,xtesteaux, ytestecura)
-    nt4,y4= evaluate(pr4,xtesteaux,ytestemortes)
+    nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
+    nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
+    nt3,y3 = evaluate(pr3,xtestedata,ytestecura)
+    nt4,y4= evaluate(pr4,xtestedata,ytestemortes)
     print(ytesteconf.shape,xtesteaux.shape,y1.shape)
     showPlot(xtesteaux,ytesteconf,xtesteaux,y1)
     showPlot(xtesteaux,ytestemoni,xtesteaux,y2)
