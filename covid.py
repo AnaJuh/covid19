@@ -4,37 +4,25 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import confusion_matrix
-
+#vai comer sua chata linda
 def evaluate(pr,x,y1):
     y2 = pr.predict(x)
-    print(y2)
-    print(y1)
     nota = r2_score(y1,y2)
-    print(nota)
     return nota,y2
 
 def convertedatas(data):
     data.reverse()
     data = np.asarray(data)
-    data1 = pd.get_dummies((data))
-    data2 = []
-    data2 = data1.values
-    data2 = np.asarray(data2)
-    data3 = []
-    for i,nome in enumerate(data2):
-      data3.append(str(data2[i]))
-      data3[i] = data3[i].replace("[", "");
-      data3[i] = data3[i].replace("]", "");
-      data3[i] = data3[i].replace(" ", "");
-    data3 = np.asarray(data3)
-    data3 = data3.astype(np.double)
-    data3 = data3.reshape(-1,1)
+    labelencoder_X = LabelEncoder()
+    data2 = labelencoder_X.fit_transform(data)    
+    data3 = data2.reshape(-1,1)
     return data3
 
 def preprocessing(valor):
@@ -53,9 +41,7 @@ def transform(x,a):
     return XPolynomial
 
 def polynomial_regression(x,y,a):
-    polynomialFeatures = PolynomialFeatures(degree = a)
-    XPolynomial = polynomialFeatures.fit_transform(x)    
-    polyLinearRegression = LinearRegression().fit(XPolynomial, y)
+    polyLinearRegression = LinearRegression().fit(x, y)
     return polyLinearRegression
 
 def showPlot(XPoints, yPoints, XLine, yLine):
@@ -303,17 +289,21 @@ if __name__ == "__main__":
     xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.2)
     xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.2)
     xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.2)
-    xtestedata = transform(xtestedata,3)
-    pr1 = polynomial_regression(xtreinodata,ytreinoconf,3)
-    pr2 = polynomial_regression(xtreinodata,ytreinomoni,3)
-    pr3 = polynomial_regression(xtreinodata, ytreinocura,3)
-    pr4 = polynomial_regression(xtreinodata,ytreinomortes,3)
+    print(xtestedata)   
+    xtestedata = transform(xtestedata,2)
+    xtestedata = transform(xtreinodata,2)
+    print(xtestedata)
+    pr1 = polynomial_regression(xtreinodata,ytreinoconf,2)
+    pr2 = polynomial_regression(xtreinodata,ytreinomoni,2)
+    pr3 = polynomial_regression(xtreinodata, ytreinocura,2)
+    pr4 = polynomial_regression(xtreinodata,ytreinomortes,2)
 #    print(xtreinodata,ytreinoconf)
     nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
     nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
     nt3,y3 = evaluate(pr3,xtestedata, ytestecura)
     nt4,y4= evaluate(pr4,xtestedata,ytestemortes)
-    #showPlot(ytesteconf,ytesteconf,ytesteconf,y1)
-    #showPlot(ytesteconf,ytestemoni,ytesteconf,y2)
-    #showPlot(ytesteconf, ytestecura,ytesteconf,y3
-    #showPlot(ytesteconf,ytestemortes,ytesteconf,y4)
+   # print(xtestedata,ytesteconf.shape,xtestedata.shape,y1.shape)
+    showPlot(xtestedata,ytesteconf,xtestedata,y1)
+    showPlot(xtestedata,ytestemoni,xtestedata,y2)
+    showPlot(xtestedata, ytestecura,xtestedata,y3)
+    showPlot(xtestedata,ytestemortes,xtestedata,y4)
