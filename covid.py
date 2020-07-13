@@ -23,6 +23,8 @@ def convertedatas(data):
     labelencoder_X = LabelEncoder()
     data2 = labelencoder_X.fit_transform(data)    
     data3 = data2.reshape(-1,1)
+    scaler =  StandardScaler()
+    data3 = scaler.fit_transform(data3)
     return data3
 
 def preprocessing(valor):
@@ -31,8 +33,8 @@ def preprocessing(valor):
     valor = valor.reshape(-1,1)
     imputer = SimpleImputer(missing_values=-1,strategy='mean')
     valor = imputer.fit_transform(valor)
-    scaler =  StandardScaler()
-    valor = scaler.fit_transform(valor)
+    #scaler =  StandardScaler()
+    #valor = scaler.fit_transform(valor)
     return valor
 
 def transform(x,a):
@@ -289,21 +291,22 @@ if __name__ == "__main__":
     xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.2)
     xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.2)
     xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.2)
-    print(xtestedata)   
-    xtestedata = transform(xtestedata,2)
-    xtestedata = transform(xtreinodata,2)
-    print(xtestedata)
-    pr1 = polynomial_regression(xtreinodata,ytreinoconf,2)
-    pr2 = polynomial_regression(xtreinodata,ytreinomoni,2)
-    pr3 = polynomial_regression(xtreinodata, ytreinocura,2)
-    pr4 = polynomial_regression(xtreinodata,ytreinomortes,2)
+    xtreinoaux = xtreinodata
+    xtesteaux =  xtestedata
+    xtestedata = transform(xtestedata,7)
+    xtreinodata = transform(xtreinodata,7)
+    print(ytestemoni)
+    pr1 = polynomial_regression(xtreinodata,ytreinoconf,7)
+    pr2 = polynomial_regression(xtreinodata,ytreinomoni,7)
+    pr3 = polynomial_regression(xtreinodata, ytreinocura,7)
+    pr4 = polynomial_regression(xtreinodata,ytreinomortes,7)
 #    print(xtreinodata,ytreinoconf)
     nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
     nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
     nt3,y3 = evaluate(pr3,xtestedata, ytestecura)
     nt4,y4= evaluate(pr4,xtestedata,ytestemortes)
-   # print(xtestedata,ytesteconf.shape,xtestedata.shape,y1.shape)
-    showPlot(xtestedata,ytesteconf,xtestedata,y1)
-    showPlot(xtestedata,ytestemoni,xtestedata,y2)
-    showPlot(xtestedata, ytestecura,xtestedata,y3)
-    showPlot(xtestedata,ytestemortes,xtestedata,y4)
+    print(ytesteconf.shape,xtesteaux.shape,y1.shape)
+    showPlot(xtesteaux,ytesteconf,xtesteaux,y1)
+    showPlot(xtesteaux,ytestemoni,xtesteaux,y2)
+    showPlot(xtesteaux, ytestecura,xtesteaux,y3)
+    showPlot(xtesteaux,ytestemortes,xtesteaux,y4)
