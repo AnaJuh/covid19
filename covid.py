@@ -1,4 +1,7 @@
+%matplotlib inline
+
 #-*- coding: utf-8 -*-
+
 import json
 import pandas as pd
 import numpy as np
@@ -868,10 +871,10 @@ if __name__ == "__main__":
     curados = preprocessing(curados)
     mortes = preprocessing(mortes)
     datas = convertedatas(data)
-    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.1)
-    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.1)
-    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.1)
-    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.1)
+    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.3)
+    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.3)
+    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.3)
+    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.3)
     xtreinoaux = xtreinodata
     xtesteaux =  xtestedata
     xtestedata = xtestedata
