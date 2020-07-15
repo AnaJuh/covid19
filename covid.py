@@ -1,6 +1,6 @@
 %matplotlib inline
-
 #-*- coding: utf-8 -*-
+
 
 import json
 import pandas as pd
@@ -11,24 +11,29 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import PoissonRegressor
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import confusion_matrix
+import os
+
+def restart_runtime():
+  os.kill(os.getpid(), 9)
+
 #vai comer sua chata linda
+
 def evaluate(pr,x,y1):
     y2 = pr.predict(x)
     nota = r2_score(y1,y2)
-    print(nota)
     return nota,y2
 
 def convertedatas(data):
     data.reverse()
     data = np.asarray(data)
-    print(data.size)
     for i in range(0,data.size,1):
       data[i] = i
     data2 = data.reshape(-1,1)
-    data2 = data2.astype(np.float)
+    data2 = data2.astype(np.int)
     print(data2)
     #scaler =  StandardScaler()
     #data3 = scaler.fit_transform(data3)
@@ -37,22 +42,26 @@ def convertedatas(data):
 def preprocessing(valor):
     valor.reverse()
     valor = np.asarray(valor)
+    aux = ''
+    for i in range(0,valor.size,1):
+      if valor[i] != '-1' :
+        aux = valor[i]
+      else:
+        valor[i] = aux
+    valor = valor.astype(np.int)
     valor = valor.reshape(-1,1)
-    imputer = SimpleImputer(missing_values=-1,strategy='mean')
-    valor = imputer.fit_transform(valor)
     #scaler =  StandardScaler()
     #valor = scaler.fit_transform(valor)
     return valor
 
 def polynomial_regression(x,y,a):
-    polyLinearRegression = LinearRegression()
-    polyLinearRegression.fit(x,y)
+    polyLinearRegression = PoissonRegressor(warm_start=False)
+    polyLinearRegression = polyLinearRegression.fit(x,y)
     return polyLinearRegression
 
 def showPlot(XPoints, yPoints, x,y):
-    print(x)
     plt.scatter(x,y,color = 'red') #Mostra os pontos reais dos dados
-    plt.plot(XPoints,yPoints,color = 'blue') #Mostra os pontos preditos pelo modelo
+    plt.scatter(XPoints,yPoints,color = 'blue') #Mostra os pontos preditos pelo modelo
     plt.title("Comparando pontos reais com a reta produzida pela regressão polinomial")
     plt.xlabel("Data")
     plt.ylabel("Confirmados")
@@ -871,10 +880,10 @@ if __name__ == "__main__":
     curados = preprocessing(curados)
     mortes = preprocessing(mortes)
     datas = convertedatas(data)
-    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.3)
-    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.3)
-    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.3)
-    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.3)
+    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.2, random_state = 0)
+    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.2,random_state = 0 )
+    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.2, random_state = 0)
+    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.2, random_state = 0)
     xtreinoaux = xtreinodata
     xtesteaux =  xtestedata
     xtestedata = xtestedata
@@ -883,7 +892,7 @@ if __name__ == "__main__":
     pr2 = polynomial_regression(xtreinodata,ytreinomoni,1)
     pr3 = polynomial_regression(xtreinodata, ytreinocura,1)
     pr4 = polynomial_regression(xtreinodata,ytreinomortes,1)
-#    print(xtreinodata,ytreinoconf)
+    
     nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
     nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
     nt3,y3 = evaluate(pr3,xtestedata,ytestecura)
