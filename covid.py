@@ -1,7 +1,8 @@
 %matplotlib inline
 #-*- coding: utf-8 -*-
 
-
+!pip uninstall scikit-learn
+!pip install scikit-learn
 import json
 import pandas as pd
 import numpy as np
@@ -15,16 +16,12 @@ from sklearn.linear_model import PoissonRegressor
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import confusion_matrix
-import os
-
-def restart_runtime():
-  os.kill(os.getpid(), 9)
-
-#vai comer sua chata linda
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 
 def evaluate(pr,x,y1):
     y2 = pr.predict(x)
-    nota = r2_score(y1,y2)
+    nota = sqrt(mean_squared_error(y1, y2))
     return nota,y2
 
 def convertedatas(data):
@@ -34,9 +31,8 @@ def convertedatas(data):
       data[i] = i
     data2 = data.reshape(-1,1)
     data2 = data2.astype(np.int)
-    print(data2)
     #scaler =  StandardScaler()
-    #data3 = scaler.fit_transform(data3)
+    #data3 = scaler.fit_transform(data2)
     return data2
 
 def preprocessing(valor):
@@ -53,13 +49,22 @@ def preprocessing(valor):
     #scaler =  StandardScaler()
     #valor = scaler.fit_transform(valor)
     return valor
+def transform(x,a):
+    polynomialFeatures = PolynomialFeatures(degree = a)
+    XPolynomial = polynomialFeatures.fit_transform(x)
+    return XPolynomial
 
 def polynomial_regression(x,y,a):
-    polyLinearRegression = PoissonRegressor(warm_start=False)
+    polyLinearRegression = PoissonRegressor(warm_start=False,fit_intercept=False)
     polyLinearRegression = polyLinearRegression.fit(x,y)
     return polyLinearRegression
 
-def showPlot(XPoints, yPoints, x,y):
+def polynomial_regression2(x,y,a):
+    polyLinearRegression = LinearRegression()
+    polyLinearRegression.fit(x,y)
+    return polyLinearRegression
+
+def showPlot(XPoints, yPoints, x , y):
     plt.scatter(x,y,color = 'red') #Mostra os pontos reais dos dados
     plt.scatter(XPoints,yPoints,color = 'blue') #Mostra os pontos preditos pelo modelo
     plt.title("Comparando pontos reais com a reta produzida pela regressão polinomial")
@@ -69,6 +74,41 @@ def showPlot(XPoints, yPoints, x,y):
 
 if __name__ == "__main__":
     arq = """ [
+      {
+            "data": "16/07/2020",
+            "confirmados": "451",
+            "monitorados": "251",
+            "curados": "192",
+            "óbitos": "8"
+        },
+        {
+            "data": "15/07/2020",
+            "confirmados": "417",
+            "monitorados": "229",
+            "curados": "180",
+            "óbitos": "8"
+        },
+        {
+            "data": "14/07/2020",
+            "confirmados": "387",
+            "monitorados": "208",
+            "curados": "171",
+            "óbitos": "8"
+        },
+        {
+            "data": "13/07/2020",
+            "confirmados": "375",
+            "monitorados": "220",
+            "curados": "148",
+            "óbitos": "7"
+        },
+        {
+            "data": "12/07/2020",
+            "confirmados": "362",
+            "monitorados": "217",
+            "curados": "138",
+            "óbitos": "7"
+        },
         {
             "data": "11/07/2020",
             "confirmados": "334",
@@ -880,25 +920,29 @@ if __name__ == "__main__":
     curados = preprocessing(curados)
     mortes = preprocessing(mortes)
     datas = convertedatas(data)
-    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.2, random_state = 0)
-    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.2,random_state = 0 )
-    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.2, random_state = 0)
-    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.2, random_state = 0)
-    xtreinoaux = xtreinodata
-    xtesteaux =  xtestedata
-    xtestedata = xtestedata
-    xtreinodata = xtreinodata
-    pr1 = polynomial_regression(xtreinodata,ytreinoconf,1)
-    pr2 = polynomial_regression(xtreinodata,ytreinomoni,1)
-    pr3 = polynomial_regression(xtreinodata, ytreinocura,1)
-    pr4 = polynomial_regression(xtreinodata,ytreinomortes,1)
-    
-    nt1,y1 = evaluate(pr1,xtestedata,ytesteconf)
-    nt2,y2 = evaluate(pr2,xtestedata,ytestemoni)
-    nt3,y3 = evaluate(pr3,xtestedata,ytestecura)
-    nt4,y4= evaluate(pr4,xtestedata,ytestemortes)
-    #print(ytesteconf.shape,xtestedata.shape,y1.shape)
-    showPlot(xtestedata,ytesteconf,xtestedata,y1)
-    showPlot(xtestedata,ytestemoni,xtestedata,y2)
-    showPlot(xtestedata, ytestecura,xtestedata,y3)
-    showPlot(xtestedata,ytestemortes,xtestedata,y4)
+    xtreinodata, xtestedata, ytreinoconf, ytesteconf = train_test_split(datas, confirmados, test_size = 0.1, random_state = 0)
+    xtreinodata, xtestedata, ytreinomoni, ytestemoni = train_test_split(datas, monitorados, test_size = 0.1,random_state = 0 )
+    xtreinodata, xtestedata, ytreinocura, ytestecura = train_test_split(datas, curados, test_size = 0.1, random_state = 0)
+    xtreinodata, xtestedata, ytreinomortes, ytestemortes= train_test_split(datas, mortes, test_size = 0.1, random_state = 0)
+    xtreinoaux = transform(xtreinodata,9)
+    xtesteaux =  transform(xtestedata,9)
+    pr1 = polynomial_regression2(xtreinoaux,ytreinoconf,9)
+    pr2 = polynomial_regression2(xtreinoaux,ytreinomoni,9)
+    pr3 = polynomial_regression2(xtreinoaux,ytreinocura,9)
+    pr4 = polynomial_regression2(xtreinoaux,ytreinomortes,9)
+    xaux = [116,117,118,119,120]
+    xaux = np.asarray(xaux)
+    xaux = xaux.reshape(-1,1)
+    xaux = transform(xaux,9)
+    yaux = pr1.predict(xaux)
+    print(yaux)
+    nt1,y1 = evaluate(pr1,xtesteaux,ytesteconf)
+    nt2,y2 = evaluate(pr2,xtesteaux,ytestemoni)
+    nt3,y3 = evaluate(pr3,xtesteaux,ytestecura)
+    nt4,y4= evaluate(pr4,xtesteaux,ytestemortes)
+    xaux = [116,117,118,119,120]
+    print(nt1," ",nt2," ",nt3," ",nt4)
+    showPlot(datas,confirmados,xtestedata,y1)
+    showPlot(datas,monitorados,xtestedata,y2)
+    showPlot(datas,curados,xtestedata,y3)
+    showPlot(datas,mortes,xtestedata,y4)
